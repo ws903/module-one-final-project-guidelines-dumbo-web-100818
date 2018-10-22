@@ -11,6 +11,8 @@ else
 	user = User.create(username: username)
 end
 
+
+
 Stock.get_stock_price(ticker_name: "FB")
 binding.pry
 0
