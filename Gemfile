@@ -6,3 +6,4 @@ gem "sqlite3"
 gem "pry"
 gem "require_all"
 gem 'nokogiri', '>=1.6.6.2'
+gem "rest-client"
