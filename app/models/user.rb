@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
 	def make_transaction(ticker_name:)
 		puts "How many shares?"
 		quantity_shares = gets.chomp
+		Stock.get_stock_price(ticker_name: ticker_name)
+		user.update_balance
 		stock = Stock.find_by(ticker_name: ticker_name)
 		transaction = Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_id: stock.id, user_id: self.id)
 		transaction_price = transaction.stock_price * transaction.quantity_shares
@@ -56,6 +58,7 @@ class User < ActiveRecord::Base
 	end
 
 	def sell_all_ticker_shares(ticker_name:)
+		user.update_balance
 		find_transaction(ticker_name: ticker_name).destroy
 	end
 end

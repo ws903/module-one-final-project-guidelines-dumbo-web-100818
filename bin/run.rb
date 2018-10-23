@@ -52,7 +52,6 @@ while user_option != "6"
 
 		if yes_no == 'y'
 			user.make_transaction(ticker_name: ticker_name)
-
 		else
 
 		end
@@ -60,7 +59,6 @@ while user_option != "6"
 	elsif user_option == "3"
 		puts "Please enter the name of the stock you want to buy:"
 		ticker_name = gets.chomp
-		Stock.get_stock_price(ticker_name: ticker_name)
 		user.make_transaction(ticker_name: ticker_name)
 
 	elsif user_option == "4"
@@ -68,8 +66,6 @@ while user_option != "6"
 		ticker_name = gets.chomp
 		puts "How many #{ticker_name} shares do you want sell (if ALL, please enter ALL):"
 		sell_quantity = gets.chomp.downcase
-
-		user.update_balance
 
 		if sell_quantity == "all"
 			user.sell_all_ticker_shares(ticker_name: ticker_name)
