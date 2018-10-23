@@ -1,17 +1,11 @@
 require 'rest-client'
 require 'json'
-require 'open-uri'
-require 'nokogiri'
 
 class Stock < ActiveRecord::Base
 	has_many :transactions
 	has_many :users, through: :transactions
 
 	@@api_key = "0O9ZU6OG2DM59BBY"
-
-	stock_ticker_api = "https://iextrading.com/trading/eligible-symbols/"
-	Nokogiri::HTML(open(stock_ticker_api)).css("div.app tr.bg-silver-on-hover")
-	binding.pry
 
 	def self.get_stock_price(ticker_name:)
 		# api_url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=#{ticker_name}&interval=1min&apikey=#{@@api_key}"

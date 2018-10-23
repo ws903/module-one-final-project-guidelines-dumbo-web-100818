@@ -47,32 +47,46 @@ while user_option != "6"
 	elsif user_option == "2"
 		puts "Please enter the name of the stock your want to check:"
 		ticker_name = gets.chomp
-		stock_price = Stock.get_stock_price(ticker_name: ticker_name)
-		puts stock_price
-		puts "Do you want to buy this stock? (Y/N)"
-		yes_no = gets.chomp.downcase
+		begin
+			stock_price = Stock.get_stock_price(ticker_name: ticker_name)
+			puts stock_price
+			puts "Do you want to buy this stock? (Y/N)"
+			yes_no = gets.chomp.downcase
 
-		if yes_no == 'y'
-			user.make_transaction(ticker_name: ticker_name)
-		else
+			if yes_no == 'y'
+				user.make_transaction(ticker_name: ticker_name)
+			else
 
+			end
+
+		rescue RestClient::NotFound
+			puts "Please enter a valid ticker!"
 		end
 
 	elsif user_option == "3"
 		puts "Please enter the name of the stock you want to buy:"
 		ticker_name = gets.chomp
-		user.make_transaction(ticker_name: ticker_name)
+		begin
+			user.make_transaction(ticker_name: ticker_name)
+		rescue RestClient::NotFound
+			puts "Please enter a valid ticker!"
+		end
 
 	elsif user_option == "4"
 		puts "Please enter the name of the stock your want to sell:"
 		ticker_name = gets.chomp
-		puts "How many #{ticker_name} shares do you want sell (if ALL, please enter ALL):"
-		sell_quantity = gets.chomp.downcase
+		begin
+			puts "How many #{ticker_name} shares do you want sell (if ALL, please enter ALL):"
+			sell_quantity = gets.chomp.downcase
 
-		if sell_quantity == "all"
-			user.sell_all_ticker_shares(ticker_name: ticker_name)
-		else
-			user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
+			if sell_quantity == "all"
+				user.sell_all_ticker_shares(ticker_name: ticker_name)
+			else
+				user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
+			end
+
+		rescue RestClient::NotFound
+			puts "Please enter a valid ticker!"
 		end
 
 

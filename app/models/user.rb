@@ -13,9 +13,8 @@ class User < ActiveRecord::Base
 		Stock.get_stock_price(ticker_name: ticker_name)
 		stock = Stock.find_by(ticker_name: ticker_name)
 		transaction = Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_id: stock.id, user_id: self.id)
-		transaction_price = transaction.stock_price * transaction.quantity_shares
-		self.balance += transaction_price
 		puts "Success! You just bougth #{transaction.quantity_shares} #{ticker_name} shares!"
+		self.update_balance
 	end
 
 	def update_balance
