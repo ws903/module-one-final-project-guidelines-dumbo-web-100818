@@ -4,8 +4,6 @@ puts "Welcome to []!!"
 puts "1. Log in 2. Create account "
 user_input = gets.chomp
 
-Stock.get_stock_price(ticker_name: "FB")
-
 if user_input == "1"
 	puts "Username :"
 	username = gets.chomp.downcase
