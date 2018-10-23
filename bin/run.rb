@@ -1,5 +1,5 @@
 require_relative '../config/environment'
-
+binding.pry
 puts "Welcome to []!!"
 puts "1. Log in 2. Create account "
 user_input = gets.chomp
@@ -89,6 +89,11 @@ while user_option != "6"
 			puts "Please enter a valid ticker!"
 		end
 
+	elsif user_option == "5"
+		user.delete_all_transactions
+		user.destroy
+		puts "Account deleted!"
+		user_option = "6"
 
 	elsif user_option == "6"
 		puts "Goodbye. Have a great day."

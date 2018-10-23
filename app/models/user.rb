@@ -67,4 +67,8 @@ end
 		find_transaction(ticker_name: ticker_name).destroy
 		user.update_balance
 	end
+
+	def delete_all_transactions
+		Transaction.where(user_id: self.id).destroy_all
+	end
 end
