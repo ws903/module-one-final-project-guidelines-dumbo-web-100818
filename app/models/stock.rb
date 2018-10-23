@@ -17,7 +17,8 @@ class Stock < ActiveRecord::Base
 		else
 			self.create(ticker_name: ticker_name, stock_price: stock_price)
 		end
+		stock_price
 	end
 
-	
+
 end
