@@ -34,8 +34,8 @@ class User < ActiveRecord::Base
 		self.balance = total_balance.round(2)
 	end
 
-	def find_transaction(ticker_name:)
-		self.transactions.find {|transaction|
+	def find_transactions(ticker_name:)
+		self.transactions.select {|transaction|
 			transaction.stock.ticker_name == ticker_name
 		}
 	end
@@ -52,19 +52,37 @@ class User < ActiveRecord::Base
 		return original_balance
 	end
 
+	def get_total_quantity_share(ticker_name:)
+		find_transactions.reduce(0) {|total, transaction|
+			total += transaction.quantity_shares
+		}
+	end
+
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
-		if sell_quantity.to_i <= transaction.quantity_shares && !!/\A\d+\z/.match(sell_quantity) && self.transactions.length > 0 && find_transaction(ticker_name: ticker_name).length > 0
-			transaction = find_transaction(ticker_name: ticker_name)
-			updated_price = Stock.get_stock_price(ticker_name: ticker_name)
-			self.balance -= (updated_price * sell_quantity.to_i).round(2)
-			transaction.quantity_shares -= sell_quantity.to_i
+		if (!!/\A\d+\z/.match(sell_quantity)) && (self.transactions.length) > 0 && (find_transactions(ticker_name: ticker_name).length > 0)
+			if sell_quantity.to_i <= get_total_quantity_share(ticker_name: ticker_name)
+				sell_quantity = sell_quantity.to_i
+				transactions = find_transactions(ticker_name: ticker_name)
+				transactions.map {|transaction|
+					updated_price = Stock.get_stock_price(ticker_name: ticker_name)
+					if transaction.quantity_shares < sell_quantity
+						self.balance -= (updated_price * sell_quantity).round(2)
+						transaction.quantity_shares -= sell_quantity
+					else
+						self.balance -= (updated_price * sell_quantity).round(2)
+						transaction.quantity_shares -= sell_quantity
+					end
+
+				}
 		else
 			puts "You are trying to make invalid transaction!"
+		end
 	end
-end
 
 	def sell_all_ticker_shares(ticker_name:)
-		find_transaction(ticker_name: ticker_name).destroy
+		find_transactions(ticker_name: ticker_name).map{|transaction|
+			transaction.destroy
+		}
 		user.update_balance
 	end
 
