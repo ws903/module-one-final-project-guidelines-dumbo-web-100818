@@ -74,6 +74,7 @@ class User < ActiveRecord::Base
 					end
 
 				}
+			end
 		else
 			puts "You are trying to make invalid transaction!"
 		end
