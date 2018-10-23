@@ -12,11 +12,13 @@ class Stock < ActiveRecord::Base
 		stock_hash = JSON.parse(RestClient.get(api_url))
 		stock_info = stock_hash["Time Series (1min)"][stock_hash["Time Series (1min)"].keys[0]]
 		stock_price = stock_info["4. close"].to_f
+
 		if self.find_by(ticker_name: ticker_name)
 			self.find_by(ticker_name: ticker_name).update(stock_price: stock_price)
 		else
 			self.create(ticker_name: ticker_name, stock_price: stock_price)
 		end
+
 		stock_price
 	end
 
