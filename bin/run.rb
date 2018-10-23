@@ -4,6 +4,8 @@ puts "Welcome to []!!"
 puts "1. Log in 2. Create account "
 user_input = gets.chomp
 
+Stock.new
+
 if user_input == "1"
 	puts "Username :"
 	username = gets.chomp.downcase
