@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
 	end
 
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
-		if sell_quantity.to_i <= transaction.quantity_shares && !!/\A\d+\z/.match(sell_quantity)
+		if sell_quantity.to_i <= transaction.quantity_shares && !!/\A\d+\z/.match(sell_quantity) && self.transactions.length > 0 && find_transaction(ticker_name: ticker_name).length > 0
 			transaction = find_transaction(ticker_name: ticker_name)
 			updated_price = Stock.get_stock_price(ticker_name: ticker_name)
 			self.balance -= (updated_price * sell_quantity.to_i).round(2)
