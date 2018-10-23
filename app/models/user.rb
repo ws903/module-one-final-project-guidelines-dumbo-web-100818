@@ -10,11 +10,15 @@ class User < ActiveRecord::Base
 	def make_transaction(ticker_name:)
 		puts "How many shares?"
 		quantity_shares = gets.chomp.to_i
+		if quantity_shares > 0 
 		Stock.get_stock_price(ticker_name: ticker_name)
 		stock = Stock.find_by(ticker_name: ticker_name)
 		transaction = Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_id: stock.id, user_id: self.id)
 		puts "Success! You just bougth #{transaction.quantity_shares} #{ticker_name} shares!"
 		self.update_balance
+	else
+		puts "You are trying to make invalid transaction!"
+		end
 	end
 
 	def update_balance
@@ -50,9 +54,13 @@ class User < ActiveRecord::Base
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
 		transaction = find_transaction(ticker_name: ticker_name)
 		updated_price = Stock.get_stock_price(ticker_name: ticker_name)
+		if sell_quantity.to_i <= transaction.quantity_shares && sell_quantity.to_i > 0
 		self.balance -= (updated_price * sell_quantity.to_f).round(2)
 		transaction.quantity_shares -= sell_quantity.to_i
+	else
+		puts "You are trying to make invalid transaction!"
 	end
+end
 
 	def sell_all_ticker_shares(ticker_name:)
 		find_transaction(ticker_name: ticker_name).destroy

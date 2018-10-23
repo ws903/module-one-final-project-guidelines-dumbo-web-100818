@@ -34,7 +34,7 @@ end
 
 user_option = ""
 while user_option != "6"
-	puts "Please select one of the following options: 1.Check balance 2.check stock price 3.Buy new stocks 4.Sell stocks 5.Delete your account 6.Log out"
+	puts "Please select one of the following options:\n 1.Check balance\n 2.Check stock price\n 3.Buy new stocks\n 4.Sell stocks\n 5.Delete your account\n 6.Log out"
 	user_option = gets.chomp
 
 	if user_option == "1"
@@ -42,7 +42,7 @@ while user_option != "6"
 		original_balance = user.check_original_balance
 		puts "Your original investment total is: $#{original_balance}"
 		puts "Your current balance is : $#{user.balance}"
-		
+
 
 	elsif user_option == "2"
 		puts "Please enter the name of the stock your want to check:"
