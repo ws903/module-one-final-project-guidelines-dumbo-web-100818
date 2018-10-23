@@ -9,9 +9,7 @@ class User < ActiveRecord::Base
 
 	def make_transaction(ticker_name:)
 		puts "How many shares?"
-		quantity_shares = gets.chomp
-		Stock.get_stock_price(ticker_name: ticker_name)
-		self.update_balance
+		quantity_shares = gets.chomp.to_i
 		stock = Stock.find_by(ticker_name: ticker_name)
 		transaction = Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_id: stock.id, user_id: self.id)
 		transaction_price = transaction.stock_price * transaction.quantity_shares
@@ -51,10 +49,9 @@ class User < ActiveRecord::Base
 
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
 		transaction = find_transaction(ticker_name: ticker_name)
-		update_balance
 		updated_price = Stock.get_stock_price(ticker_name: ticker_name)
 		self.balance -= (updated_price * sell_quantity.to_f).round(2)
-		transaction.quantity_shares -= sell_quantity.to_f
+		transaction.quantity_shares -= sell_quantity.to_i
 	end
 
 	def sell_all_ticker_shares(ticker_name:)
