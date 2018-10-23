@@ -40,6 +40,7 @@ while user_option != "6"
 		original_balance = user.check_original_balance
 		puts "Your original investment total is: $#{original_balance}"
 		puts "Your current balance is : $#{user.balance}"
+		
 
 	elsif user_option == "2"
 		puts "Please enter the name of the stock your want to check:"
@@ -51,6 +52,7 @@ while user_option != "6"
 
 		if yes_no == 'y'
 			user.make_transaction(ticker_name: ticker_name)
+
 		else
 
 		end
@@ -68,8 +70,8 @@ while user_option != "6"
 		sell_quantity = gets.chomp.downcase
 
 		user.update_balance
-		
-		if sell_quantity == "all" 
+
+		if sell_quantity == "all"
 			user.sell_all_ticker_shares(ticker_name: ticker_name)
 		else
 			user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
