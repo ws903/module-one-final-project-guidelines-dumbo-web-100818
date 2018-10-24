@@ -32,8 +32,8 @@ class User < ActiveRecord::Base
 			updated_price = Stock.get_stock_price(ticker_name: ticker_name)
 			total_balance += updated_price * quantity_shares
 		}
-		self.balance = total_balance
-		User.where(id: self.id).update(balance: total_balance)
+		self.balance = total_balance.round(2)
+		User.where(id: self.id).update(balance: total_balance.round(2))
 	end
 
 	def find_transactions(ticker_name:)
@@ -49,9 +49,9 @@ class User < ActiveRecord::Base
 			ticker_name = transaction.stock.ticker_name
 			quantity_shares = transaction.quantity_shares
 			original_price = transaction.stock_price
-			original_balance += (original_price * quantity_shares).round(2)
+			original_balance += original_price * quantity_shares
 		}
-		return original_balance
+		return original_balance.round(2)
 	end
 
 	def get_total_quantity_shares(ticker_name:)
