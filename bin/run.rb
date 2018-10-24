@@ -36,7 +36,7 @@ while user_option != "6"
 
 	if user_option == "1"
 		user.update_balance
-		original_balance = user.check_original_balance
+		original_balance = user.original_balance
 		puts "Your original investment total is: $#{original_balance}"
 		puts "Your current balance is : $#{user.balance}"
 
