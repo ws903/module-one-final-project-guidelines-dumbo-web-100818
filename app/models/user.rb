@@ -70,11 +70,15 @@ class User < ActiveRecord::Base
 						self.balance -= (sell_quantity * updated_price)
 						User.where(id: self.id).update(balance: self.balance - (updated_price * sell_quantity).round(2))
 						transaction.quantity_shares -= sell_quantity
-						sell_quantity
+						sell_quantity = 0
+					elsif sell_quantity == 0
+						break
 					else
+						temp_sell_quantity = transaction.quantity_shares
 						self.balance -= (sell_quantity * updated_price)
 						User.where(id: self.id).update(balance: self.balance - (updated_price * sell_quantity).round(2))
 						transaction.quantity_shares -= sell_quantity
+						sell_quantity -= transaction.quantity_shares
 					end
 
 				}
