@@ -4,9 +4,9 @@ heart = prompt.decorate('❤ ', :magenta)
 
 
 user_select = prompt.select( "Welcome to []!!") do |menu|
-	menu.enum '.'
 	menu.choice "Log in", 1
 	menu.choice "Create an account", 2
+	menu.choice "Exit", 3
 end
 
 if user_select == 1
@@ -29,12 +29,22 @@ elsif user_select == 2
 	  q.validate /\A\w+\Z/
 	  q.modify   :capitalize
 	end
-	puts "Welcome #{username}!"
-	user = User.create(username: username)
+	if User.find_by(username: username)
+		puts "Seems like you have an account."
+		user = User.find_by(username: username)
+		puts "Welcome back #{username}!"
+		else
+		puts "Welcome #{username}!"
+		user = User.create(username: username)
+	end
+elsif user_select == 3
+	puts "Goodbye. Have a great day."
 end
+#
+#
+# user_option = ""
+# while user_option != 6
 
-user_option = ""
-while user_option != 6
 user_option = prompt.select( "Please select one of the following options:") do |menu|
 	menu.enum '.'
 	menu.choice "Check balance", 1
@@ -89,11 +99,11 @@ end
 		begin
 			stock_price = Stock.get_stock_price(ticker_name: ticker_name)
 			puts stock_price
-			prompt.yes?("Do you want to buy this stock?")
+			yes_q = prompt.yes?("Do you want to buy this stock?")
 			# puts "Do you want to buy this stock? (Y/N)"
 			# yes_no = gets.chomp.downcase
 
-			if yes_no == 'y'
+			if yes_q
 				user.make_transaction(ticker_name: ticker_name)
 			else
 				user_option = 6
@@ -130,6 +140,7 @@ end
 		end
 
 	elsif user_option == 5
+		binding.pry
 		user.delete_all_transactions
 		user.destroy
 		puts "Account deleted!"
@@ -140,7 +151,11 @@ end
 	else
 		puts "Choice invalid."
 	end
-end
+# end
+
+yes_q = prompt.yes?("Would you like to make another action?")
+
+
 
 
 Stock.get_stock_price(ticker_name: "FB")
