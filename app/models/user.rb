@@ -11,10 +11,11 @@ class User < ActiveRecord::Base
 		puts "How many shares?"
 		quantity_shares = gets.chomp
 		if !!/\A\d+\z/.match(quantity_shares)
-			quantity_share = quantity_share.to_i
+			quantity_shares = quantity_shares.to_i
 			Stock.get_stock_price(ticker_name: ticker_name)
 			stock = Stock.find_by(ticker_name: ticker_name)
 			transaction = Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_id: stock.id, user_id: self.id)
+			self.transactions.push(transaction)
 			puts "Success! You just bougth #{transaction.quantity_shares} #{ticker_name} shares!"
 			self.update_balance
 		else
@@ -53,34 +54,34 @@ class User < ActiveRecord::Base
 		return original_balance
 	end
 
-	def get_total_quantity_share(ticker_name:)
+	def get_total_quantity_shares(ticker_name:)
 		find_transactions(ticker_name: ticker_name).reduce(0) {|total, transaction|
-			total += transaction.quantity_shares
+			total + transaction.quantity_shares
 		}
 	end
 
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
 		if (!!/\A\d+\z/.match(sell_quantity)) && (self.transactions.length) > 0 && (find_transactions(ticker_name: ticker_name).length > 0)
-			if sell_quantity.to_i <= get_total_quantity_share(ticker_name: ticker_name)
+			if sell_quantity.to_i <= get_total_quantity_shares(ticker_name: ticker_name)
 				sell_quantity = sell_quantity.to_i
 				transactions = find_transactions(ticker_name: ticker_name)
-				find_transactions(ticker_name: ticker_name).map {|transaction|
+				transactions.map {|transaction|
 					updated_price = Stock.get_stock_price(ticker_name: ticker_name)
-					if transaction.quantity_shares < sell_quantity
-						temp_sell_quantity = transaction.quantity_shares
-						self.balance -= (sell_quantity * updated_price)
-						User.where(id: self.id).update(balance: self.balance - (updated_price * sell_quantity).round(2))
-						transaction.quantity_shares -= sell_quantity
-						sell_quantity -= transaction.quantity_shares
+					if transaction.quantity_shares <= sell_quantity
+						tmp_sell_quantity = sell_quantity - (sell_quantity - transaction.quantity_shares)
+						sell_quantity = (sell_quantity - transaction.quantity_shares)
+
+						self.balance -= (tmp_sell_quantity * updated_price)
+						User.where(id: self.id).update(balance: (self.balance - (updated_price * tmp_sell_quantity)).round(2))
+						self.transactions.delete(transaction) 
 					elsif sell_quantity == 0
 						break
 					else
 						self.balance -= (sell_quantity * updated_price)
-						User.where(id: self.id).update(balance: self.balance - (updated_price * sell_quantity).round(2))
+						User.where(id: self.id).update(balance: (self.balance - (updated_price * sell_quantity)).round(2))
 						transaction.quantity_shares -= sell_quantity
 						sell_quantity = 0
 					end
-
 				}
 			else
 				puts "You are trying to make invalid transaction!"

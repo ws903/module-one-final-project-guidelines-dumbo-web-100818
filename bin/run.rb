@@ -42,7 +42,7 @@ while user_option != "6"
 
 	elsif user_option == "2"
 		puts "Please enter the name of the stock your want to check:"
-		ticker_name = gets.chomp
+		ticker_name = gets.chomp.upcase
 		begin
 			stock_price = Stock.get_stock_price(ticker_name: ticker_name)
 			puts stock_price
@@ -61,7 +61,7 @@ while user_option != "6"
 
 	elsif user_option == "3"
 		puts "Please enter the name of the stock you want to buy:"
-		ticker_name = gets.chomp
+		ticker_name = gets.chomp.upcase
 		begin
 			user.make_transaction(ticker_name: ticker_name)
 		rescue RestClient::NotFound
@@ -70,7 +70,7 @@ while user_option != "6"
 
 	elsif user_option == "4"
 		puts "Please enter the name of the stock your want to sell:"
-		ticker_name = gets.chomp
+		ticker_name = gets.chomp.upcase
 		begin
 			puts "How many #{ticker_name} shares do you want sell (if ALL, please enter ALL):"
 			sell_quantity = gets.chomp.downcase
@@ -79,6 +79,7 @@ while user_option != "6"
 				user.sell_all_ticker_shares(ticker_name: ticker_name)
 			else
 				user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
+				binding.pry
 			end
 
 		rescue RestClient::NotFound
