@@ -1,4 +1,5 @@
 require_relative '../config/environment'
+
 puts "Welcome to []!!"
 puts "1. Log in 2. Create account "
 user_input = gets.chomp
@@ -35,10 +36,10 @@ while user_option != "6"
 	user_option = gets.chomp
 
 	if user_option == "1"
+		binding.pry
 		user.update_balance
-		original_balance = user.check_original_balance
-		puts "Your original investment total is: $#{original_balance}"
-		puts "Your current balance is : $#{user.balance}"
+		puts "PORTFOLIO BALANCE: $#{user.balance}"
+		user.show_balance
 
 	elsif user_option == "2"
 		puts "Please enter the name of the stock your want to check:"
@@ -55,7 +56,7 @@ while user_option != "6"
 
 			end
 
-		rescue RestClient::NotFound
+		rescue IEX::Errors::SymbolNotFoundError
 			puts "Please enter a valid ticker!"
 		end
 
@@ -64,7 +65,7 @@ while user_option != "6"
 		ticker_name = gets.chomp.upcase
 		begin
 			user.make_transaction(ticker_name: ticker_name)
-		rescue RestClient::NotFound
+		rescue IEX::Errors::SymbolNotFoundError
 			puts "Please enter a valid ticker!"
 		end
 
@@ -81,7 +82,7 @@ while user_option != "6"
 				user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
 			end
 
-		rescue RestClient::NotFound
+		rescue IEX::Errors::SymbolNotFoundError
 			puts "Please enter a valid ticker!"
 		end
 

@@ -1,3 +1,5 @@
+require 'tty' 
+
 class User < ActiveRecord::Base
 	has_many :transactions
 	has_many :stocks, through: :transactions
@@ -23,6 +25,20 @@ class User < ActiveRecord::Base
 		end
 	end
 
+	def show_balance
+		table = TTY::Table.new header: ['Stock', 'Buy Price', 'Current Price', 'Change Percentage', 'Shares','stock']
+		self.transactions.map {|transaction|
+			stock = transaction.stock
+			stock_original_price = transaction.stock_price
+			stock_price = stock.stock_price
+			diff_perc = (((stock_price - stock_original_price)/stock_original_price) * 100).round(2)
+			diff_perc_str = "#{diff_perc} %"
+			shares = transaction.quantity_shares
+			table << [stock.ticker_name, stock_original_price, stock_price, diff_perc_str, shares, stock]
+		}
+		puts table.render(:unicode)
+	end
+
 	def update_balance
 		total_balance = 0.0
 
@@ -32,9 +48,9 @@ class User < ActiveRecord::Base
 			updated_price = Stock.get_stock_price(ticker_name: ticker_name)
 			total_balance += updated_price * quantity_shares
 		}
-		difference = total_balance.round(2) - check_original_balance
-		self.balance = (total_balance.round(2) + difference)
-		User.where(id: self.id).update(balance: total_balance.round(2))
+		
+		self.balance = total_balance.round(2)
+		User.where(id: self.id).update(balance: self.balance)
 	end
 
 	def find_transactions(ticker_name:)
@@ -43,27 +59,21 @@ class User < ActiveRecord::Base
 		}
 	end
 
-	def check_original_balance
-		original_balance = 0.0
+	# def check_original_balance
+	# 	original_balance = 0.0
 
-		self.transactions.map {|transaction|
-			ticker_name = transaction.stock.ticker_name
-			quantity_shares = transaction.quantity_shares
-			original_price = transaction.stock_price
-			original_balance += original_price * quantity_shares
-		}
-		return original_balance.round(2)
-	end
-
-	def get_total_quantity_shares(ticker_name:)
-		find_transactions(ticker_name: ticker_name).reduce(0) {|total, transaction|
-			total + transaction.quantity_shares
-		}
-	end
+	# 	self.transactions.map {|transaction|
+	# 		ticker_name = transaction.stock.ticker_name
+	# 		quantity_shares = transaction.quantity_shares
+	# 		original_price = transaction.stock_price
+	# 		original_balance += original_price * quantity_shares
+	# 	}
+	# 	return original_balance.round(2)
+	# end
 
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
 		if (!!/\A\d+\z/.match(sell_quantity)) && (self.transactions.length) > 0 && (find_transactions(ticker_name: ticker_name).length > 0)
-			if sell_quantity.to_i <= get_total_quantity_shares(ticker_name: ticker_name)
+			if sell_quantity.to_i <= self.transactions.sum("quantity_shares")
 				sell_quantity = sell_quantity.to_i
 				transactions = find_transactions(ticker_name: ticker_name)
 				transactions.map {|transaction|
