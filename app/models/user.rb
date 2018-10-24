@@ -54,7 +54,7 @@ class User < ActiveRecord::Base
 	end
 
 	def get_total_quantity_share(ticker_name:)
-		find_transactions.reduce(0) {|total, transaction|
+		find_transactions(ticker_name: ticker_name).reduce(0) {|total, transaction|
 			total += transaction.quantity_shares
 		}
 	end
