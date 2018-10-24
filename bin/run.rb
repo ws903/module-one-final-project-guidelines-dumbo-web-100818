@@ -40,7 +40,6 @@ while user_option != "6"
 		puts "Your original investment total is: $#{original_balance}"
 		puts "Your current balance is : $#{user.balance}"
 
-
 	elsif user_option == "2"
 		puts "Please enter the name of the stock your want to check:"
 		ticker_name = gets.chomp

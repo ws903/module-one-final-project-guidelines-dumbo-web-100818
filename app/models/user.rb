@@ -64,24 +64,26 @@ class User < ActiveRecord::Base
 			if sell_quantity.to_i <= get_total_quantity_share(ticker_name: ticker_name)
 				sell_quantity = sell_quantity.to_i
 				transactions = find_transactions(ticker_name: ticker_name)
-				transactions.map {|transaction|
+				find_transactions(ticker_name: ticker_name).map {|transaction|
 					updated_price = Stock.get_stock_price(ticker_name: ticker_name)
 					if transaction.quantity_shares < sell_quantity
-						self.balance -= (sell_quantity * updated_price)
-						User.where(id: self.id).update(balance: self.balance - (updated_price * sell_quantity).round(2))
-						transaction.quantity_shares -= sell_quantity
-						sell_quantity = 0
-					elsif sell_quantity == 0
-						break
-					else
 						temp_sell_quantity = transaction.quantity_shares
 						self.balance -= (sell_quantity * updated_price)
 						User.where(id: self.id).update(balance: self.balance - (updated_price * sell_quantity).round(2))
 						transaction.quantity_shares -= sell_quantity
 						sell_quantity -= transaction.quantity_shares
+					elsif sell_quantity == 0
+						break
+					else
+						self.balance -= (sell_quantity * updated_price)
+						User.where(id: self.id).update(balance: self.balance - (updated_price * sell_quantity).round(2))
+						transaction.quantity_shares -= sell_quantity
+						sell_quantity = 0
 					end
 
 				}
+			else
+				puts "You are trying to make invalid transaction!"
 			end
 		else
 			puts "You are trying to make invalid transaction!"
