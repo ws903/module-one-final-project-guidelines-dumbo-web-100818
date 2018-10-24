@@ -36,7 +36,7 @@ while user_option != "6"
 	user_option = gets.chomp
 
 	if user_option == "1"
-		binding.pry
+		# binding.pry
 		user.update_balance
 		puts "PORTFOLIO BALANCE: $#{user.balance}"
 		user.show_balance
@@ -53,7 +53,7 @@ while user_option != "6"
 			if yes_no == 'y'
 				user.make_transaction(ticker_name: ticker_name)
 			else
-
+				user_option = "6"
 			end
 
 		rescue IEX::Errors::SymbolNotFoundError

@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
 	end
 
 	def show_balance
-		table = TTY::Table.new header: ['Stock', 'Buy Price', 'Current Price', 'Change Percentage', 'Shares','stock']
+		table = TTY::Table.new header: ['Stock', 'Buy Price', 'Current Price', 'Change Percentage', 'Shares']
 		self.transactions.map {|transaction|
 			stock = transaction.stock
 			stock_original_price = transaction.stock_price
@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
 			diff_perc = (((stock_price - stock_original_price)/stock_original_price) * 100).round(2)
 			diff_perc_str = "#{diff_perc} %"
 			shares = transaction.quantity_shares
-			table << [stock.ticker_name, stock_original_price, stock_price, diff_perc_str, shares, stock]
+			table << [stock.ticker_name, stock_original_price, stock_price, diff_perc_str, shares]
 		}
 		puts table.render(:unicode)
 	end
