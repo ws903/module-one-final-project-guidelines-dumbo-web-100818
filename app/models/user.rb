@@ -32,7 +32,8 @@ class User < ActiveRecord::Base
 			updated_price = Stock.get_stock_price(ticker_name: ticker_name)
 			total_balance += updated_price * quantity_shares
 		}
-		self.balance = total_balance.round(2)
+		difference = total_balance.round(2) - check_original_balance
+		self.balance = (total_balance.round(2) + difference)
 		User.where(id: self.id).update(balance: total_balance.round(2))
 	end
 

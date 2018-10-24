@@ -79,7 +79,6 @@ while user_option != "6"
 				user.sell_all_ticker_shares(ticker_name: ticker_name)
 			else
 				user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
-				binding.pry
 			end
 
 		rescue RestClient::NotFound
