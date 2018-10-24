@@ -18,7 +18,6 @@ class User < ActiveRecord::Base
 			self.transactions.push(transaction)
 			puts "Success! You just bougth #{transaction.quantity_shares} #{ticker_name} shares!"
 			self.update_balance
-			self.update_original_balance
 		else
 			puts "You are trying to make invalid transaction!"
 		end
@@ -33,12 +32,18 @@ class User < ActiveRecord::Base
 			updated_price = Stock.get_stock_price(ticker_name: ticker_name)
 			total_balance += updated_price * quantity_shares
 		}
-		binding.pry
-		self.balance = total_balance.round(2)
+		difference = total_balance.round(2) - check_original_balance
+		self.balance = (total_balance.round(2) + difference)
 		User.where(id: self.id).update(balance: total_balance.round(2))
 	end
 
-	def update_original_balance
+	def find_transactions(ticker_name:)
+		self.transactions.select {|transaction|
+			transaction.stock.ticker_name == ticker_name
+		}
+	end
+
+	def check_original_balance
 		original_balance = 0.0
 
 		self.transactions.map {|transaction|
@@ -47,14 +52,7 @@ class User < ActiveRecord::Base
 			original_price = transaction.stock_price
 			original_balance += original_price * quantity_shares
 		}
-		self.original_balance = original_balance
-		User.where(id: self.id).update(original_balance: original_balance.round(2))
-	end
-
-	def find_transactions(ticker_name:)
-		self.transactions.select {|transaction|
-			transaction.stock.ticker_name == ticker_name
-		}
+		return original_balance.round(2)
 	end
 
 	def get_total_quantity_shares(ticker_name:)
