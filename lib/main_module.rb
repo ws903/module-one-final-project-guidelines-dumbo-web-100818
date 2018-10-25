@@ -20,7 +20,7 @@ module Main
 			end
 
 			if user_choice != @user.stocks.uniq.count+1
-				@user.show_stocks
+				show_spinner("Done!")
 				@user.show_balance(ticker_name: ticker_hash[user_choice])
 			end
 		end
