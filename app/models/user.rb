@@ -1,4 +1,5 @@
-require 'tty' 
+require 'tty'
+require 'colorize'
 
 class User < ActiveRecord::Base
 	has_many :transactions
@@ -29,12 +30,20 @@ class User < ActiveRecord::Base
 			stock_original_price = transaction.stock_price
 			stock_price = stock.stock_price
 			diff_perc = (((stock_price - stock_original_price)/stock_original_price) * 100).round(2)
-			diff_perc_str = "#{diff_perc} %"
+			if diff_perc < 0
+					diff_perc_str = "#{diff_perc} %".colorize(:red)
+			elsif diff_perc > 0
+					diff_perc_str = "#{diff_perc} %".colorize(:green)
+
+			end
+
 			shares = transaction.quantity_shares
 			table << [stock.ticker_name, stock_original_price, stock_price, diff_perc_str, shares]
 		}
 		puts table.render(:unicode)
-	end
+
+end
+
 
 	def update_balance
 		total_balance = 0.0
@@ -45,7 +54,7 @@ class User < ActiveRecord::Base
 			updated_price = Stock.get_stock_price(ticker_name: ticker_name)
 			total_balance += updated_price * quantity_shares
 		}
-		
+
 		self.balance = total_balance.round(2)
 		User.where(id: self.id).update(balance: self.balance)
 	end
@@ -81,7 +90,7 @@ class User < ActiveRecord::Base
 
 						self.balance -= (tmp_sell_quantity * updated_price)
 						User.where(id: self.id).update(balance: (self.balance - (updated_price * tmp_sell_quantity)).round(2))
-						self.transactions.delete(transaction) 
+						self.transactions.delete(transaction)
 					elsif sell_quantity == 0
 						break
 					else

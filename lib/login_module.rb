@@ -1,6 +1,8 @@
+	require 'colorize'
 module Login
 	PROMPT = TTY::Prompt.new
 	SPINNER = TTY::Spinner.new(":title [:spinner] ", format: :arrow_pulse)
+
 
 	def login
 		username = PROMPT.ask("Username:") do |q|
@@ -47,7 +49,7 @@ module Login
 		sleep(2)
 		SPINNER.stop
 		puts `clear`
-		puts stop_msg
+		puts stop_msg.colorize(:light_blue)
 		sleep(1)
 	end
 end

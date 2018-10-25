@@ -29,7 +29,7 @@ module Main
 
 		rescue IEX::Errors::SymbolNotFoundError
 			puts `clear`
-			puts "Please enter a valid ticker!"
+			puts "Please enter a valid ticker!".colorize(:red)
 		end
 	end
 
@@ -44,7 +44,7 @@ module Main
 			show_spinner("Success! \nYou just bougth #{quantity_shares} #{ticker_name} shares!")
 		rescue IEX::Errors::SymbolNotFoundError
 			puts `clear`
-			puts "Please enter a valid ticker!"
+			puts "Please enter a valid ticker!".colorize(:red)
 		end
 	end
 
@@ -66,7 +66,7 @@ module Main
 
 		rescue IEX::Errors::SymbolNotFoundError
 			puts `clear`
-			puts "Please enter a valid ticker!"
+			puts "Please enter a valid ticker!".colorize(:red)
 		end
 	end
 
@@ -89,7 +89,7 @@ module Main
 		SPINNER.update(title: "Performing task")
 		SPINNER.auto_spin
 		sleep(2)
-		SPINNER.stop(stop_msg)
+		SPINNER.stop(stop_msg.colorize(:green))
 		sleep(1)
 		puts `clear`
 	end
