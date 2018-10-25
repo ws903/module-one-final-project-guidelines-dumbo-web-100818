@@ -2,10 +2,30 @@ module Main
 	include Login
 
 	def check_balance
-		@user.update_balance
+		user_choice = 0
 		show_spinner("Done!")
-		puts "PORTFOLIO BALANCE: $#{@user.balance}"
-		@user.show_balance
+		while user_choice != @user.stocks.uniq.count+1
+			puts "PORTFOLIO BALANCE: $#{@user.balance}"
+			@user.show_stocks
+
+			ticker_hash = {}
+			user_choice = PROMPT.select("Which stock do you want to check?") do |menu|
+				c = 1
+				@user.stocks.uniq.map {|stock|
+					menu.choice stock.ticker_name, c
+					ticker_hash[c] = stock.ticker_name
+					c += 1
+				}
+				menu.choice "exit", c
+			end
+
+			# binding.pry
+
+			puts `clear`
+			if user_choice != @user.stocks.uniq.count+1
+				@user.show_balance(ticker_name: ticker_hash[user_choice])
+			end
+		end
 	end
 
 	def check_stock_price
@@ -13,8 +33,8 @@ module Main
 		ticker_name = gets.chomp.upcase
 
 		begin
-			stock_price = Stock.get_stock_price(ticker_name: ticker_name)
-			puts stock_price
+			stock = Stock.get_stock(ticker_name: ticker_name)
+			puts stock.stock_price
 			yes_q = PROMPT.yes?("Do you want to buy this stock?")
 
 			if yes_q
@@ -25,11 +45,11 @@ module Main
 				@user_option = 6
 			end
 
-			show_spinner("Success! \nYou just bougth #{quantity_shares} #{ticker_name} shares!")
+			show_spinner("\nSuccess! \nYou just bougth #{quantity_shares} #{ticker_name} shares!")
 
-		rescue IEX::Errors::SymbolNotFoundError
+		rescue IEX::Errors::SymbolNotFoundError, URI::InvalidURIError
 			puts `clear`
-			puts "Please enter a valid ticker!".colorize(:red)
+			puts "Please enter a valid ticker!".colorize(:color => :red, :mode => :bold)
 		end
 	end
 
@@ -41,10 +61,10 @@ module Main
 			puts "How many shares?"
 			quantity_shares = gets.chomp
 			@user.make_transaction(ticker_name: ticker_name, quantity_shares: quantity_shares)
-			show_spinner("Success! \nYou just bougth #{quantity_shares} #{ticker_name} shares!")
-		rescue IEX::Errors::SymbolNotFoundError
+			show_spinner("\nSuccess! \nYou just bougth #{quantity_shares} #{ticker_name} shares!")
+		rescue IEX::Errors::SymbolNotFoundError, URI::InvalidURIError
 			puts `clear`
-			puts "Please enter a valid ticker!".colorize(:red)
+			puts "Please enter a valid ticker!".colorize(:color => :red, :mode => :bold)
 		end
 	end
 
@@ -62,11 +82,11 @@ module Main
 				@user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
 			end
 
-			show_spinner("Success! \nYou sold #{sell_quantity} #{ticker_name} shares!")
+			show_spinner("\nSuccess! \nYou sold #{sell_quantity} #{ticker_name} shares!")
 
-		rescue IEX::Errors::SymbolNotFoundError
+		rescue IEX::Errors::SymbolNotFoundError, URI::InvalidURIError
 			puts `clear`
-			puts "Please enter a valid ticker!".colorize(:red)
+			puts "Please enter a valid ticker!".colorize(:color => :red, :mode => :bold)
 		end
 	end
 
@@ -75,7 +95,7 @@ module Main
 		if delete_q
 			@user.delete_all_transactions
 			@user.destroy
-			show_spinner("Success! \nAccount deleted!")
+			show_spinner("\nSuccess! \nAccount deleted!")
 			return 6
 		else
 			puts "Glad you decided to stay with us!"
