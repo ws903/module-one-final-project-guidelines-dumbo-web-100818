@@ -73,14 +73,17 @@ module Main
 		begin
 			puts "How many #{ticker_name} shares do you want sell (if ALL, please enter ALL):"
 			sell_quantity = gets.chomp.downcase
+			sold = false
 
 			if sell_quantity == "all"
-				@user.sell_all_ticker_shares(ticker_name: ticker_name)
+				sold = @user.sell_all_ticker_shares(ticker_name: ticker_name)
 			else
-				@user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
+				sold = @user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
 			end
 
-			show_spinner("\nSuccess! \nYou sold #{sell_quantity} #{ticker_name} shares!")
+			if sold
+				show_spinner("\nSuccess! \nYou sold #{sell_quantity} #{ticker_name} shares!")
+			end
 
 		rescue IEX::Errors::SymbolNotFoundError, URI::InvalidURIError
 			puts `clear`

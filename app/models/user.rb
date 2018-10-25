@@ -15,10 +15,9 @@ class User < ActiveRecord::Base
 		if !!/\A\d+\z/.match(quantity_shares)
 			quantity_shares = quantity_shares.to_i
 			stock = Stock.get_stock(ticker_name: ticker_name)
-			# stock = Stock.find_by(ticker_name: ticker_name)
 			stock_time = Time.at(stock.latest_update/1000).to_datetime.to_s
 			transaction = Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_time: stock_time, stock_id: stock.id, user_id: self.id)
-			self.transactions.push(transaction)
+			# self.transactions.push(transaction)
 			self.update_balance
 		else
 			puts "You are trying to make invalid transaction!".colorize(:color => :red, :mode => :bold)
@@ -39,7 +38,7 @@ class User < ActiveRecord::Base
 		puts table.render(:unicode)
 	end
 
-	def show_balance(ticker_name: ticker_name)
+	def show_balance(ticker_name:)
 		table = TTY::Table.new header: ['Stock', 'Buy Price', 'Current Price', 'Change %', 'Shares', 'Purchase Time']
 		self.update_balance
 		transaction_stock = self.stocks.find_by(ticker_name: ticker_name)
@@ -96,8 +95,11 @@ end
 	# end
 
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
+		sold = false
+		stock = Stock.find_by(ticker_name: ticker_name)
+
 		if (!!/\A\d+\z/.match(sell_quantity)) && (self.transactions.length) > 0 && (find_transactions(ticker_name: ticker_name).length > 0)
-			if sell_quantity.to_i <= self.transactions.where(ticker_name: ticker_name).sum("quantity_shares")
+			if sell_quantity.to_i <= self.transactions.where(stock_id: stock.id).sum("quantity_shares")
 				sell_quantity = sell_quantity.to_i
 				transactions = find_transactions(ticker_name: ticker_name)
 				transactions.map {|transaction|
@@ -118,12 +120,14 @@ end
 						sell_quantity = 0
 					end
 				}
+				sold = true
 			else
 				puts "You are trying to make invalid transaction!".colorize(:color => :red, :mode => :bold)
 			end
 		else
 			puts "You are trying to make invalid transaction!".colorize(:color => :red, :mode => :bold)
 		end
+		return sold
 	end
 
 	def sell_all_ticker_shares(ticker_name:)
