@@ -89,7 +89,7 @@ module Main
 		SPINNER.update(title: "Performing task")
 		SPINNER.auto_spin
 		sleep(2)
-		SPINNER.stop(stop_msg.colorize(:green))
+		SPINNER.stop(stop_msg.colorize(:color => :green, :mode => :bold))
 		sleep(1)
 		puts `clear`
 	end

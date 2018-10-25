@@ -49,7 +49,7 @@ module Login
 		sleep(2)
 		SPINNER.stop
 		puts `clear`
-		puts stop_msg.colorize(:light_blue)
+		puts stop_msg.colorize(:color => :light_blue, :mode => :bold)
 		sleep(1)
 	end
 end

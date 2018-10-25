@@ -31,9 +31,9 @@ class User < ActiveRecord::Base
 			stock_price = stock.stock_price
 			diff_perc = (((stock_price - stock_original_price)/stock_original_price) * 100).round(2)
 			if diff_perc < 0
-					diff_perc_str = "#{diff_perc} %".colorize(:red)
+					diff_perc_str = "#{diff_perc} %".colorize(:color => :red, :mode => :bold)
 			elsif diff_perc > 0
-					diff_perc_str = "#{diff_perc} %".colorize(:green)
+					diff_perc_str = "#{diff_perc} %".colorize(:green, :mode => :bold)
 
 			end
 
