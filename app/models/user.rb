@@ -50,9 +50,9 @@ class User < ActiveRecord::Base
 			diff_perc = (((stock_price - stock_original_price)/stock_original_price) * 100).round(2)
 			diff_perc_str = "#{diff_perc} %"
 			if diff_perc < 0
-					diff_perc_str.colorize(:color => :red, :mode => :bold)
+					diff_perc_str = diff_perc_str.colorize(:color => :red, :mode => :bold)
 			elsif diff_perc > 0
-					diff_perc_str.colorize(:color => :green, :mode => :bold)
+					diff_perc_str = diff_perc_str.colorize(:color => :green, :mode => :bold)
 			end
 
 			shares = transaction.quantity_shares

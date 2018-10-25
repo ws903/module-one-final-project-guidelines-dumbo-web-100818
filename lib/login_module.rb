@@ -1,4 +1,3 @@
-	require 'colorize'
 module Login
 	PROMPT = TTY::Prompt.new
 	SPINNER = TTY::Spinner.new(":title [:spinner] ", format: :arrow_pulse)

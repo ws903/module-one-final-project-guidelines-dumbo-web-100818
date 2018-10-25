@@ -32,7 +32,7 @@ module Main
 
 		begin
 			stock = Stock.get_stock(ticker_name: ticker_name)
-			puts stock.stock_price
+			puts "$ #{stock.stock_price}"
 			yes_q = PROMPT.yes?("Do you want to buy this stock?")
 
 			if yes_q
