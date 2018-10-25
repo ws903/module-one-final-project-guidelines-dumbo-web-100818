@@ -18,9 +18,7 @@ module Main
 				}
 				menu.choice "exit", c
 			end
-
-			# binding.pry
-
+			
 			puts `clear`
 			if user_choice != @user.stocks.uniq.count+1
 				@user.show_balance(ticker_name: ticker_hash[user_choice])

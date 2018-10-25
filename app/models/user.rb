@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
 			quantity_shares = quantity_shares.to_i
 			stock = Stock.get_stock(ticker_name: ticker_name)
 			# stock = Stock.find_by(ticker_name: ticker_name)
-			stock_time = Time.at(stock.latest_update/1000).to_datetime.to_s.split('T').join(' ').split('-')[0..-2].join('-')
+			stock_time = Time.at(stock.latest_update/1000).to_datetime.to_s
 			transaction = Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_time: stock_time, stock_id: stock.id, user_id: self.id)
 			self.transactions.push(transaction)
 			self.update_balance
