@@ -4,10 +4,24 @@ include Login, Main
 prompt = TTY::Prompt.new
 heart = prompt.decorate('❤ ', :magenta)
 
+
 user_select = 0
 while user_select != 3
 	puts `clear`
-	user_select = prompt.select( "Welcome to FLEX (Flatiron Exchange)!!") do |menu|
+	puts "
+	                         /$$
+	                        | $$
+	 /$$  /$$  /$$  /$$$$$$ | $$  /$$$$$$$  /$$$$$$  /$$$$$$/$$$$   /$$$$$$
+	| $$ | $$ | $$ /$$__  $$| $$ /$$_____/ /$$__  $$| $$_  $$_  $$ /$$__  $$
+	| $$ | $$ | $$| $$$$$$$$| $$| $$      | $$  \ $$| $$ \ $$ \ $$| $$$$$$$$
+	| $$ | $$ | $$| $$_____/| $$| $$      | $$  | $$| $$ | $$ | $$| $$_____/
+	|  $$$$$/$$$$/|  $$$$$$$| $$|  $$$$$$$|  $$$$$$/| $$ | $$ | $$|  $$$$$$$
+	 \_____/\___/  \_______/|__/ \_______/ \______/ |__/ |__/ |__/ \_______/
+
+
+
+	"
+	user_select = prompt.select( "to FLEX (Flatiron Exchange)!") do |menu|
 		menu.choice "Log in", 1
 		menu.choice "Create an account", 2
 		menu.choice "Exit", 3
@@ -56,7 +70,7 @@ while user_select != 3
 			user_option = delete_account
 		elsif user_option == 6
 			puts `clear`
-			puts "Goodbye #{@user.username}. Have a great day."
+			puts "Goodbye #{@user.username}"
 		else
 			puts `clear`
 			puts "Choice invalid."
