@@ -7,7 +7,7 @@ heart = prompt.decorate('❤ ', :magenta)
 user_select = 0
 while user_select != 3
 	puts `clear`
-	user_select = prompt.select( "Welcome to []!!") do |menu|
+	user_select = prompt.select( "Welcome to FLEX (Flatiron Exchange)!!") do |menu|
 		menu.choice "Log in", 1
 		menu.choice "Create an account", 2
 		menu.choice "Exit", 3
