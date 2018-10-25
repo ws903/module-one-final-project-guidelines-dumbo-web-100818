@@ -106,7 +106,7 @@ class User < ActiveRecord::Base
 		find_transactions(ticker_name: ticker_name).map{|transaction|
 			transaction.destroy
 		}
-		user.update_balance
+		self.update_balance
 	end
 
 	def delete_all_transactions
