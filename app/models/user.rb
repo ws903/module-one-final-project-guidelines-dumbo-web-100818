@@ -9,16 +9,13 @@ class User < ActiveRecord::Base
 		self.balance ||= 0
 	end
 
-	def make_transaction(ticker_name:)
-		puts "How many shares?"
-		quantity_shares = gets.chomp
+	def make_transaction(ticker_name:, quantity_shares:)
 		if !!/\A\d+\z/.match(quantity_shares)
 			quantity_shares = quantity_shares.to_i
 			Stock.get_stock_price(ticker_name: ticker_name)
 			stock = Stock.find_by(ticker_name: ticker_name)
 			transaction = Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_id: stock.id, user_id: self.id)
 			self.transactions.push(transaction)
-			puts "Success! You just bougth #{transaction.quantity_shares} #{ticker_name} shares!"
 			self.update_balance
 		else
 			puts "You are trying to make invalid transaction!"

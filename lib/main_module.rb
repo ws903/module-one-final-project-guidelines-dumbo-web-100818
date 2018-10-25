@@ -1,9 +1,9 @@
 module Main
 	include Login
-	PROMPT = TTY::Prompt.new
 
 	def check_balance
 		@user.update_balance
+		show_spinner("Done!")
 		puts "PORTFOLIO BALANCE: $#{@user.balance}"
 		@user.show_balance
 	end
@@ -15,15 +15,20 @@ module Main
 		begin
 			stock_price = Stock.get_stock_price(ticker_name: ticker_name)
 			puts stock_price
-			yes_q = prompt.yes?("Do you want to buy this stock?")
+			yes_q = PROMPT.yes?("Do you want to buy this stock?")
 
 			if yes_q
-				@user.make_transaction(ticker_name: ticker_name)
+				puts "How many shares?"
+				quantity_shares = gets.chomp
+				@user.make_transaction(ticker_name: ticker_name, quantity_shares: quantity_shares)
 			else
 				@user_option = 6
 			end
 
+			show_spinner("Success! \nYou just bougth #{quantity_shares} #{ticker_name} shares!")
+
 		rescue IEX::Errors::SymbolNotFoundError
+			puts `clear`
 			puts "Please enter a valid ticker!"
 		end
 	end
@@ -33,8 +38,12 @@ module Main
 		ticker_name = gets.chomp.upcase
 
 		begin
-			@user.make_transaction(ticker_name: ticker_name)
+			puts "How many shares?"
+			quantity_shares = gets.chomp
+			@user.make_transaction(ticker_name: ticker_name, quantity_shares: quantity_shares)
+			show_spinner("Success! \nYou just bougth #{quantity_shares} #{ticker_name} shares!")
 		rescue IEX::Errors::SymbolNotFoundError
+			puts `clear`
 			puts "Please enter a valid ticker!"
 		end
 	end
@@ -53,17 +62,35 @@ module Main
 				@user.sell_n_ticker_shares(ticker_name: ticker_name, sell_quantity: sell_quantity)
 			end
 
-			puts "Success! You sold #{sell_quantity} #{ticker_name} shares!"
+			show_spinner("Success! \nYou sold #{sell_quantity} #{ticker_name} shares!")
 
 		rescue IEX::Errors::SymbolNotFoundError
+			puts `clear`
 			puts "Please enter a valid ticker!"
 		end
 	end
 
 	def delete_account
-		@user.delete_all_transactions
-		@user.destroy
-		puts "Account deleted!"
+		delete_q = PROMPT.yes?("Are you sure you want to perform this action?")
+		if delete_q
+			@user.delete_all_transactions
+			@user.destroy
+			show_spinner("Success! \nAccount deleted!")
+			return 6
+		else
+			puts "Glad you decided to stay with us!"
+			sleep(1)
+			puts `clear`
+			return 0
+		end
 	end
-	
+
+	def show_spinner(stop_msg)
+		SPINNER.update(title: "Performing task")
+		SPINNER.auto_spin
+		sleep(2)
+		SPINNER.stop(stop_msg)
+		sleep(1)
+		puts `clear`
+	end
 end
