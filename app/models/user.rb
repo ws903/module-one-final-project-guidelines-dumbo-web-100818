@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
 		stock = Stock.find_by(ticker_name: ticker_name)
 
 		Transaction.all.where(user_id: self.id).select {|transaction|
-			transaction.ticker_id == stock.id
+			transaction.stock_id == stock.id
 		}
 	end
 
