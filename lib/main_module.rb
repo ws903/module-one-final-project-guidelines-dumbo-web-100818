@@ -58,8 +58,12 @@ module Main
 		begin
 			puts "How many shares?"
 			quantity_shares = gets.chomp
-			@user.make_transaction(ticker_name: ticker_name, quantity_shares: quantity_shares)
-			show_spinner("\nSuccess! \nYou just bougth #{quantity_shares} #{ticker_name} shares!")
+			bought = @user.make_transaction(ticker_name: ticker_name, quantity_shares: quantity_shares)
+
+			if bought
+				show_spinner("\nSuccess! \nYou just bougth #{quantity_shares} #{ticker_name} shares!")
+			end
+
 		rescue IEX::Errors::SymbolNotFoundError, URI::InvalidURIError
 			puts `clear`
 			puts "Please enter a valid ticker!".colorize(:color => :red, :mode => :bold)
@@ -71,6 +75,9 @@ module Main
 		ticker_name = gets.chomp.upcase
 
 		begin
+			stock = @user.stocks.find_by(ticker_name: ticker_name)
+			shares = @user.transactions.where(stock_id: stock.id).sum("quantity_shares")
+			puts "You currently own #{shares} shares of #{ticker_name}"
 			puts "How many #{ticker_name} shares do you want sell (if ALL, please enter ALL):"
 			sell_quantity = gets.chomp.downcase
 			sold = false
@@ -85,7 +92,7 @@ module Main
 				show_spinner("\nSuccess! \nYou sold #{sell_quantity} #{ticker_name} shares!")
 			end
 
-		rescue IEX::Errors::SymbolNotFoundError, URI::InvalidURIError
+		rescue IEX::Errors::SymbolNotFoundError, URI::InvalidURIError, NoMethodError
 			puts `clear`
 			puts "Please enter a valid ticker!".colorize(:color => :red, :mode => :bold)
 		end

@@ -12,16 +12,18 @@ class User < ActiveRecord::Base
 	end
 
 	def make_transaction(ticker_name:, quantity_shares:)
+		bought = false
 		if !!/\A\d+\z/.match(quantity_shares)
 			quantity_shares = quantity_shares.to_i
 			stock = Stock.get_stock(ticker_name: ticker_name)
 			stock_time = Time.at(stock.latest_update/1000).to_datetime.to_s
-			transaction = Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_time: stock_time, stock_id: stock.id, user_id: self.id)
-			# self.transactions.push(transaction)
+			Transaction.create(quantity_shares: quantity_shares, stock_price: stock.stock_price, stock_time: stock_time, stock_id: stock.id, user_id: self.id)
 			self.update_balance
+			bought = true
 		else
 			puts "You are trying to make invalid transaction!".colorize(:color => :red, :mode => :bold)
 		end
+		bought
 	end
 
 	def show_stocks
@@ -58,9 +60,7 @@ class User < ActiveRecord::Base
 			table << [stock.ticker_name, stock_original_price, stock_price, diff_perc_str, shares, transaction.stock_time]
 		}
 		puts table.render(:unicode)
-
-end
-
+	end
 
 	def update_balance
 		total_balance = 0.0
@@ -81,18 +81,6 @@ end
 			transaction.stock.ticker_name == ticker_name
 		}
 	end
-
-	# def check_original_balance
-	# 	original_balance = 0.0
-
-	# 	self.transactions.map {|transaction|
-	# 		ticker_name = transaction.stock.ticker_name
-	# 		quantity_shares = transaction.quantity_shares
-	# 		original_price = transaction.stock_price
-	# 		original_balance += original_price * quantity_shares
-	# 	}
-	# 	return original_balance.round(2)
-	# end
 
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
 		sold = false

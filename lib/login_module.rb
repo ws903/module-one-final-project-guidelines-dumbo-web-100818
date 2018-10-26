@@ -7,7 +7,7 @@ module Login
 		username = PROMPT.ask("Username:") do |q|
 		  q.required true
 		  q.validate /\A\w+\Z/
-		  q.modify   :capitalize
+		  q.modify :capitalize
 		end
 
 		if User.find_by(username: username)
@@ -24,7 +24,7 @@ module Login
 		username = PROMPT.ask("Please create a username:") do |q|
 		  q.required true
 		  q.validate /\A\w+\Z/
-		  q.modify   :capitalize
+		  q.modify :capitalize
 		end
 
 		if User.find_by(username: username)

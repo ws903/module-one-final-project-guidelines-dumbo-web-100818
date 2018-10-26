@@ -15,7 +15,7 @@ class Stock < ActiveRecord::Base
 		quote = IEX::Resources::Quote.get(ticker_name)
 		stock_price = quote.latest_price
 		stock_latest_update = quote.latest_update
-		stock = self.find_or_create_by(ticker_name: ticker_name)
+		stock = self.find_or_initialize_by(ticker_name: ticker_name)
 		stock.update(stock_price: stock_price, latest_update: stock_latest_update)
 
 		stock
