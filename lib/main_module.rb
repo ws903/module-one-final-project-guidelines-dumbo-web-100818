@@ -4,8 +4,9 @@ module Main
 	def check_balance
 		user_choice = 0
 		show_spinner("Done!")
-		while user_choice != @user.stocks.uniq.count+1
-			puts "PORTFOLIO BALANCE: $#{@user.balance}"
+		while user_choice != @user.all_stocks.uniq.count+1
+			@user.update_balance
+			puts "PORTFOLIO BALANCE: $#{@user.balance.round(2)}"
 			@user.show_stocks
 
 			ticker_hash = {}
@@ -19,7 +20,7 @@ module Main
 				menu.choice "exit", c
 			end
 
-			if user_choice != @user.stocks.uniq.count+1
+			if user_choice != @user.all_stocks.uniq.count+1
 				show_spinner("Done!")
 				@user.show_balance(ticker_name: ticker_hash[user_choice])
 			end
@@ -75,7 +76,7 @@ module Main
 		ticker_name = gets.chomp.upcase
 
 		begin
-			stock = @user.stocks.find_by(ticker_name: ticker_name)
+			stock = @user.find_by_stock(ticker_name: ticker_name)
 			shares = @user.transactions.where(stock_id: stock.id).sum("quantity_shares")
 			puts "You currently own #{shares} shares of #{ticker_name}"
 			puts "How many #{ticker_name} shares do you want sell (if ALL, please enter ALL):"

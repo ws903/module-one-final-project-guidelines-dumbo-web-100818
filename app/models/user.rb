@@ -32,6 +32,12 @@ class User < ActiveRecord::Base
 		}
 	end
 
+	def find_by_stock(ticker_name:)
+		all_stocks.find {|stock|
+			stock.ticker_name == ticker_name
+		}
+	end
+
 	def show_stocks
 		table = TTY::Table.new header: ['Stock', 'Shares', 'Total Price']
 		self.update_balance
@@ -49,7 +55,7 @@ class User < ActiveRecord::Base
 	def show_balance(ticker_name:)
 		table = TTY::Table.new header: ['Stock', 'Buy Price', 'Current Price', 'Change %', 'Shares', 'Purchase Time']
 		self.update_balance
-		transaction_stock = all_stocks.find_by(ticker_name: ticker_name)
+		transaction_stock = find_by_stock(ticker_name: ticker_name)
 		self.transactions.where(stock_id: transaction_stock.id).order(:stock_time).map {|transaction|
 			stock = transaction.stock
 			stock_original_price = transaction.stock_price
