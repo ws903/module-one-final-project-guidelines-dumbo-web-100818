@@ -11,6 +11,26 @@ class User < ActiveRecord::Base
 		self.balance ||= 0
 	end
 
+	def all_stocks
+		Transaction.all.where(user_id: self.id).map {|transaction|
+			Stock.all.find(transaction.stock_id)
+		}
+	end
+
+	def find_by_stock(ticker_name:)
+		all_stocks.find {|stock|
+			stock.ticker_name == ticker_name
+		}
+	end
+
+	def find_transactions(ticker_name:)
+		stock = Stock.find_by(ticker_name: ticker_name)
+
+		Transaction.all.where(user_id: self.id).select {|transaction|
+			transaction.ticker_id == stock.id
+		}
+	end
+
 	def make_transaction(ticker_name:, quantity_shares:)
 		bought = false
 		if !!/\A\d+\z/.match(quantity_shares)
@@ -24,18 +44,6 @@ class User < ActiveRecord::Base
 			puts "You are trying to make invalid transaction!".colorize(:color => :red, :mode => :bold)
 		end
 		bought
-	end
-
-	def all_stocks
-		Transaction.all.where(user_id: self.id).map {|transaction|
-			Stock.all.find(transaction.stock_id)
-		}
-	end
-
-	def find_by_stock(ticker_name:)
-		all_stocks.find {|stock|
-			stock.ticker_name == ticker_name
-		}
 	end
 
 	def show_stocks
@@ -86,14 +94,6 @@ class User < ActiveRecord::Base
 
 		self.balance = total_balance.round(2)
 		User.where(id: self.id).update(balance: self.balance)
-	end
-
-	def find_transactions(ticker_name:)
-		stock = Stock.find_by(ticker_name: ticker_name)
-
-		Transaction.all.where(user_id: self.id).select {|transaction|
-			transaction.ticker_id == stock.id
-		}
 	end
 
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
