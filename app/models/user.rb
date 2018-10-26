@@ -88,8 +88,14 @@ class User < ActiveRecord::Base
 		User.where(id: self.id).update(balance: self.balance)
 	end
 
+	def user_transactions
+		Transaction.all.map {|transaction|
+			transaction.user_id == self.id
+		}
+	end
+
 	def find_transactions(ticker_name:)
-		self.transactions.select {|transaction|
+		user_transactions.select {|transaction|
 			transaction.stock.ticker_name == ticker_name
 		}
 	end
@@ -97,7 +103,7 @@ class User < ActiveRecord::Base
 	def sell_n_ticker_shares(ticker_name:, sell_quantity:)
 		sold = false
 		stock = Stock.find_by(ticker_name: ticker_name)
-
+		
 		if (!!/\A\d+\z/.match(sell_quantity)) && (self.transactions.length) > 0 && (find_transactions(ticker_name: ticker_name).length > 0)
 			if sell_quantity.to_i <= self.transactions.where(stock_id: stock.id).sum("quantity_shares")
 				sell_quantity = sell_quantity.to_i
