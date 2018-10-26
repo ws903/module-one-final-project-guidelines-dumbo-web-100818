@@ -29,13 +29,13 @@ class User < ActiveRecord::Base
 	def all_stocks
 		Transaction.all.where(user_id: self.id).map {|transaction|
 			Stock.all.find(transaction.stock_id)
-		}.uniq
+		}
 	end
 
 	def show_stocks
 		table = TTY::Table.new header: ['Stock', 'Shares', 'Total Price']
 		self.update_balance
-		all_stocks.uniq.map {|stock|
+		all_stocks.uniq.uniq.map {|stock|
 			shares = self.transactions.where(stock_id: stock.id).sum("quantity_shares")
 			stock_price = stock.stock_price
 			total_price = (stock_price * shares).round(2)
@@ -49,7 +49,7 @@ class User < ActiveRecord::Base
 	def show_balance(ticker_name:)
 		table = TTY::Table.new header: ['Stock', 'Buy Price', 'Current Price', 'Change %', 'Shares', 'Purchase Time']
 		self.update_balance
-		transaction_stock = self.stocks.find_by(ticker_name: ticker_name)
+		transaction_stock = all_stocks.find_by(ticker_name: ticker_name)
 		self.transactions.where(stock_id: transaction_stock.id).order(:stock_time).map {|transaction|
 			stock = transaction.stock
 			stock_original_price = transaction.stock_price

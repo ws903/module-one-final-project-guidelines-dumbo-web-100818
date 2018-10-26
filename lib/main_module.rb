@@ -11,7 +11,7 @@ module Main
 			ticker_hash = {}
 			user_choice = PROMPT.select("Which stock do you want to check?") do |menu|
 				c = 1
-				@user.stocks.uniq.map {|stock|
+				@user.all_stocks.uniq.map {|stock|
 					menu.choice stock.ticker_name, c
 					ticker_hash[c] = stock.ticker_name
 					c += 1
