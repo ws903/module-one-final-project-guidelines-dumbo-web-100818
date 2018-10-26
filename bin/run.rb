@@ -13,15 +13,15 @@ while user_select != 3
 	                        | $$
 	 /$$  /$$  /$$  /$$$$$$ | $$  /$$$$$$$  /$$$$$$  /$$$$$$/$$$$   /$$$$$$
 	| $$ | $$ | $$ /$$__  $$| $$ /$$_____/ /$$__  $$| $$_  $$_  $$ /$$__  $$
-	| $$ | $$ | $$| $$$$$$$$| $$| $$      | $$  \ $$| $$ \ $$ \ $$| $$$$$$$$
+	| $$ | $$ | $$| $$$$$$$$| $$| $$      | $$  | $$| $$ | $$ | $$| $$$$$$$$
 	| $$ | $$ | $$| $$_____/| $$| $$      | $$  | $$| $$ | $$ | $$| $$_____/
 	|  $$$$$/$$$$/|  $$$$$$$| $$|  $$$$$$$|  $$$$$$/| $$ | $$ | $$|  $$$$$$$
-	 \_____/\___/  \_______/|__/ \_______/ \______/ |__/ |__/ |__/ \_______/
+	 |_____/|___/  |_______/|__/ |_______/ |______/ |__/ |__/ |__/ |_______/
 
+	\n".colorize(:color => :cyan, :mode => :bold)
+	puts "TO".colorize(:color => :cyan, :mode => :bold)
 
-
-	"
-	user_select = prompt.select( "to FLEX (Flatiron Exchange)!") do |menu|
+	user_select = prompt.select("FLEX (Flatiron Exchange)! \n".colorize(:color => :magenta, :mode => :bold)) do |menu|
 		menu.choice "Log in", 1
 		menu.choice "Create an account", 2
 		menu.choice "Exit", 3
