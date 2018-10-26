@@ -93,7 +93,7 @@ module Main
 				show_spinner("\nSuccess! \nYou sold #{sell_quantity} #{ticker_name} shares!")
 			end
 
-		rescue IEX::Errors::SymbolNotFoundError, URI::InvalidURIError#, NoMethodError
+		rescue IEX::Errors::SymbolNotFoundError, URI::InvalidURIError, NoMethodError
 			puts `clear`
 			puts "Please enter a valid ticker!".colorize(:color => :red, :mode => :bold)
 		end
