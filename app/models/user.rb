@@ -26,10 +26,16 @@ class User < ActiveRecord::Base
 		bought
 	end
 
+	def all_stocks
+		Transaction.all.where(user_id: self.id).map {|transaction|
+			Stock.all.find(transaction.stock_id)
+		}.uniq
+	end
+
 	def show_stocks
 		table = TTY::Table.new header: ['Stock', 'Shares', 'Total Price']
 		self.update_balance
-		self.stocks.uniq.map {|stock|
+		all_stocks.uniq.map {|stock|
 			shares = self.transactions.where(stock_id: stock.id).sum("quantity_shares")
 			stock_price = stock.stock_price
 			total_price = (stock_price * shares).round(2)
@@ -102,10 +108,8 @@ class User < ActiveRecord::Base
 					elsif sell_quantity == 0
 						break
 					else
-						binding.pry
 						self.balance -= (sell_quantity * stock.stock_price)
 						User.where(id: self.id).update(balance: (self.balance - (stock.stock_price * sell_quantity)).round(2))
-						# transaction.quantity_shares -= sell_quantity
 						transaction.update(quantity_shares: transaction.quantity_shares - sell_quantity)
 						sell_quantity = 0
 					end
